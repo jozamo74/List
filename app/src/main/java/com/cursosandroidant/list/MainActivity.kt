@@ -18,7 +18,7 @@ import kotlin.random.Random
  * https://www.udemy.com/user/alain-nicolas-tello/
  * Web: www.alainnicolastello.com
  ***/
-class MainActivity : AppCompatActivity(), OnClickListener {
+class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var adapter: ItemAdapter
     private lateinit var mainViewModel: MainViewModel
@@ -34,19 +34,21 @@ class MainActivity : AppCompatActivity(), OnClickListener {
     }
 
     private fun setupViewModel() {
-        mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
-        mainViewModel.items.observe(this, { items ->
+        mainViewModel.items.observe(this) { items ->
             adapter.submitList(items)
-        })
+        }
 
-        mainViewModel.errorMsg.observe(this, { error ->
+        mainViewModel.errorMsg.observe(this) { error ->
             Snackbar.make(binding.root, error, Snackbar.LENGTH_LONG).show()
-        })
+        }
     }
 
     private fun setupRecyclerView() {
-        adapter = ItemAdapter(this)
+        adapter = ItemAdapter(){  itemEntity ->
+            mainViewModel.updateItem(itemEntity)
+        }
         binding.recyclerView.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(this@MainActivity)
@@ -61,7 +63,7 @@ class MainActivity : AppCompatActivity(), OnClickListener {
         }
     }
 
-    override fun onClick(itemEntity: ItemEntity) {
+    /*override fun onClick(itemEntity: ItemEntity) {
         mainViewModel.updateItem(itemEntity)
-    }
+    }*/
 }

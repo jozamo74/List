@@ -18,7 +18,8 @@ import com.cursosandroidant.list.databinding.ItemListBinding
  * https://www.udemy.com/user/alain-nicolas-tello/
  * Web: www.alainnicolastello.com
  ***/
-class ItemAdapter(private val listener: OnClickListener) :
+class ItemAdapter(//private val listener: OnClickListener
+                private val listener: (ItemEntity) -> Unit) :
     ListAdapter<ItemEntity, RecyclerView.ViewHolder>(ItemDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -29,18 +30,19 @@ class ItemAdapter(private val listener: OnClickListener) :
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val itemEntity = getItem(position)
         with(holder as ViewHolder){
-            setListener(itemEntity)
+            //setListener(itemEntity)
             binding.tvText.text = itemEntity.text
             binding.cbFavorite.isChecked = itemEntity.isFavorite
+            binding.root.setOnClickListener { listener(itemEntity) }
         }
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view){
         val binding = ItemListBinding.bind(view)
 
-        fun setListener(itemEntity: ItemEntity){
+        /*fun setListener(itemEntity: ItemEntity){
             binding.cbFavorite.setOnClickListener { listener.onClick(itemEntity) }
-        }
+        }*/
     }
 
     class ItemDiffCallback : DiffUtil.ItemCallback<ItemEntity>(){
